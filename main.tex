@@ -1,0 +1,232 @@
+
+\documentclass{article}
+\usepackage{amsmath}					% AmS-LaTeX を使うなら
+\usepackage{amsthm}						% 定理環境のため
+\usepackage{bm}								% もしエラーになるならこの行は削除してもよい。
+\usepackage{amssymb}					% AmS-LaTeX を使うなら
+%\usepackage{type1cm}			 		% タイトルに数式を使うならここを有効にして！
+
+\usepackage{amsfonts}
+\usepackage[bbgreekl]{mathbbol}
+% 数字の mathbb
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, intersections, calc, arrows.meta,math,shapes}
+\usepackage[utf8]{inputenc}
+\usepackage{pxfonts}
+\usepackage{pxpgfmark} 
+\usepackage{coffeestains}
+
+%% 定理環境の定義
+% テキストp.46「§2.4.2 定理環境の定義」参照
+\theoremstyle{definition}
+\newtheorem{theorem}{定理}[section]
+%\newtheorem{theorem}{定理}		% セクション番号を付けないならこちら
+\newtheorem*{theorem*}{定理}	% * 付きは定理番号が付かない
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{example}[theorem]{例}
+% 必要なら他にも補題や命題, * 付き等を定義せよ。
+
+%% 証明環境
+\makeatletter 
+\renewenvironment{proof}[1][(証明)]{\par
+% 必要ならば[(証明)]を[\textbf{証明.}]等と変更することもできる。
+  \normalfont
+  \topsep6\p@\@plus6\p@ \trivlist
+  \item[\hskip\labelsep{#1}]\ignorespaces
+}{\hfill$\square$\endtrivlist}	% 証明終了の記号□を最後に付ける
+%}{\endtrivlist}								% □を付けないようにしたければこちら
+\makeatother
+
+% 数式の番号をセクション番号なしにしたければ, 次の式をコメントアウト(削除)する。
+% （amsmath を仮定している）
+\numberwithin{equation}{section}
+
+%% 関数記号の定義例（amsmath を仮定している）
+%% 添え字を使う命令には * を付ける：
+\DeclareMathOperator*{\ob}{ob}
+\DeclareMathOperator*{\mor}{mor}
+\DeclareMathOperator*{\dom}{dom}
+\DeclareMathOperator*{\cod}{cod}
+
+%% 数式中の太字とブラックボードボールド体の定義
+% 数式中の太字は $ \bm{v} $ などとすればよい。
+% 複素数体は $ \CC $, 整数全体は $ \ZZ $ とかける。
+\providecommand{\bm}[1]{\boldsymbol{#1}}
+\providecommand{\bmdefine}[2]{\newcommand{#1}{\bm{#2}}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\renewcommand{\AA}{\mathbb{A}}
+\newcommand{\BB}{\mathbb{B}}
+\newcommand{\DD}{\mathbb{D}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\Set}{\mathbb{Set}}
+\newcommand{\Cat}{\mathbb{Cat}}
+\renewcommand{\Vec}{\mathbb{Vec}}
+\newcommand{\Ring}{\mathbb{Ring}}
+\newcommand{\Grp}{\mathbb{Grp}}
+\renewcommand{\Top}{\mathbb{Top}}
+\newcommand{\1}{\mathbb{1}}
+\newcommand{\2}{\mathbb{2}}
+\renewcommand{\.}{\hspace{2mm}}
+\newcommand{\id}[1]{id_{#1}}
+\newcommand{\qbinom}[3]{
+  \begin{pmatrix}
+    #1 \\
+    #2
+  \end{pmatrix}_{#3}
+}
+\newcommand{\qBinom}[3]{
+  \begin{bmatrix}
+    #1 \\
+    #2
+  \end{bmatrix}_{#3}
+}
+
+\title{圏論周圏論}
+\author{つばきちゃん}
+
+\begin{document}
+\maketitle
+\newpage
+
+\tableofcontents
+\clearpage
+\begin{definition}
+  $0\neq q\in\CC$に対して，$q-$整数$[n]_q$は通常
+  \[
+    [n]_q:=\frac{q^n-1}{q-1}(=1+q+q^2+\dots+q^{n-2}+q^{n-1})
+  \]
+  のように定義される．
+
+  しかし，ここでは次の定義を採用する．
+  $q\in\CC,|q|>0$に対して，$q-$整数$[n]_q$を
+  \[
+    [n]_q:=\frac{q^n-q^{-n}}{q-q^{-1}}(=q^{1-n}+q^{3-n}+\dots+q^{n-3}+q^{n-1})
+  \]
+  のように定義する．
+
+  これらを区別するため，通常の$q-$整数を$(n)_q$と書き分ける．
+\end{definition}
+$(n)_q$と$[n]_q$の間には次のような関係が成り立つ．
+\[
+  [n]_q=\frac{q^n-q^{-n}}{q-q^{-1}}=\frac{q(q^{2n}-1)}{q^n(q^2-1)}=q^{1-n}(n)_{q^2}
+\]
+\begin{theorem}
+  $q-$整数$(n)_q$や，$[n]_q$に対して$q\to1$と置き換えることでこれらは整数$n$と一致する．
+\end{theorem}
+\begin{proof}
+  \begin{align*}
+    \lim_{q\to1}[n]_q&=\lim_{q\to1}\frac{q^n-q^{-n}}{q-q^{-1}}=\lim_{q\to1}(q^{1-n}+q^{3-n}+\dots+q^{n-3}+q^{n-1}) \\
+    &=1+1+1+\dots+1+1=n\\
+    \lim_{q\to1}(n)_q&=\lim_{q\to1}\frac{q^n-1}{q-1}=\lim_{q\to1}(n)_q(1+q+q^2+\dots+q^{n-2}+q^{n-1})\\
+    &=1+1+1+\dots+1+1=n
+  \end{align*}
+\end{proof}
+\begin{definition}
+  $q-$整数$[n]_q$に対して$q-$階乗$[n]_q!$を次のように定義する．
+  \begin{align*}
+    [n]_q!&= [n]_q[n-1]_q!\\
+    [0]_q!&= 1
+  \end{align*}
+  また同様に$(n)_q$に対しても階乗を
+  \begin{align*}
+    (n)_q!&= (n)_q(n-1)_q!\\
+    (0)_q!&= 1
+  \end{align*}
+  と定義する．
+\end{definition}
+また$[n]_q!$と$(n)_q!$には次の関係がある．
+\begin{align}
+  [n]_q!&=[n]_q[n-1]_q \nonumber \\
+  &=q^{1-n}(n)_{q^2}[n-1]_q \nonumber \\
+  &=q^{1-n}q^{1-(n-1)}(n)_{q^2}(n-1)_{q^2}[n-2]_q \nonumber \\
+  &\dots \nonumber \\
+  &=q^{1-n}q^{2-n}\dots q^{-1}q^0(n)_{q^2}(n-1)_{q^2}\dots(2)_{q^2}(1)_{q^2}[0]_q \nonumber \\
+  &=q^{\frac{(1-n)n}{2}}(n)_{q^2}! \label{eq:0.1}
+\end{align}
+\begin{definition}
+  $q-$二項関係を次のように定義する．
+  \begin{align*}
+    \qbinom{n}{k}{q}&=\frac{(n)_q!}{(k)_q!(n-k)_q!} \\
+    \qBinom{n}{k}{q}&=\frac{[n]_q!}{[k]_q![n-k]_q!}
+  \end{align*}
+\end{definition}
+これらの間には次の対応がある．
+(\ref{eq:0.1})により$(n)_{q}! =q^{\frac{(n-1)n}{4}}[n]_{q^\frac{1}{2}}!$であるので，
+\begin{align}
+  \qbinom{n}{k}{q}&=\frac{(n)_q!}{(k)_q!(n-k)_q!} \nonumber \\
+  &=\frac{q^{\frac{(n-1)n}{4}}[n]_{q^\frac{1}{2}}!}{q^{\frac{(k-1)k}{4}}[k]_{q^\frac{1}{2}}!q^{\frac{(n-k-1)(n-k)}{4}}[n-k]_{q^\frac{1}{2}}!} \nonumber \\
+  &=q^\frac{(n-1)n-(k-1)k-(n-k-1)(n-k)}{4}\frac{[n]_{q^\frac{1}{2}}!}{[k]_{q^\frac{1}{2}}![n-k]_{q^\frac{1}{2}}!} \nonumber \\
+  &=q^\frac{(n-k)k}{2}\qBinom{n}{k}{q^\frac{1}{2}} \label{eq:0.2}
+\end{align}
+\begin{theorem}
+  $q-$二項関係について次が成り立つ．
+  \[
+    \qbinom{n}{k}{q}=q^k\qbinom{n-1}{k}{q}+\qbinom{n-1}{k-1}{q}
+  \]
+\end{theorem}
+\begin{proof}
+  \begin{align*}
+    q^k\qbinom{n-1}{k}{q}+\qbinom{n-1}{k-1}{q}&=q^k\frac{(n-1)_q!}{(k)_q!(n-1-k)_q!}+\frac{(n-1)_q!}{(k-1)_q!(n-k)_q!}\\
+    &=q^k\frac{(n-k)_q(n-1)_q!}{(k)_q!(n-k)_q!}+\frac{(k)_q(n-1)_q!}{(k)_q!(n-k)_q!}\\
+    &=(q^k(n-k)_q+(k)_q)\frac{(n-1)_q!}{(k)_q!(n-k)_q!}\\
+    &=\left(q^k\frac{q^{n-k}-1}{q-1}+\frac{q^k-1}{q-1}\right)\frac{(n-1)_q!}{(k)_q!(n-k)_q!}\\
+    &=\left(\frac{q^n-q^k+q^k-1}{q-1}\right)\frac{(n-1)_q!}{(k)_q!(n-k)_q!}\\
+    &=\left(\frac{q^n-1}{q-1}\right)\frac{(n-1)_q!}{(k)_q!(n-k)_q!}\\
+    &=(n)_q\frac{(n-1)_q!}{(k)_q!(n-k)_q!}\\
+    &=\frac{(n)_q!}{(k)_q!(n-k)_q!}\\
+    &=\qbinom{n}{k}{q}
+  \end{align*}
+\end{proof}
+また，このことにより次が成り立つ．
+\begin{theorem}
+  \[
+  \qBinom{n}{k}{q}=q^k\qBinom{n-1}{k}{q}+q^{k-n}\qBinom{n-1}{k-1}{q}
+  \]
+\end{theorem}
+\begin{proof}
+  (\ref{eq:0.2})により
+  \begin{align*}
+    q^\frac{(n-k)k}{2}\qBinom{n}{k}{q^\frac{1}{2}}&=q^kq^\frac{(n-1-k)k}{2}\qBinom{n-1}{k}{q^\frac{1}{2}}+q^\frac{(n-k)(k-1)}{2}\qBinom{n-1}{k-1}{q^\frac{1}{2}}\\
+    \qBinom{n}{k}{q^\frac{1}{2}}&=q^\frac{(n+1-k)k-(n-k)k}{2}\qBinom{n-1}{k}{q^\frac{1}{2}}+q^\frac{(n-k)(k-1)-(n-k)k}{2}\qBinom{n-1}{k-1}{q^\frac{1}{2}}\\
+    &=q^\frac{k}{2}\qBinom{n-1}{k}{q^\frac{1}{2}}+q^\frac{k-n}{2}\qBinom{n-1}{k-1}{q^\frac{1}{2}}\\
+    \qBinom{n}{k}{q}&=q^k\qBinom{n-1}{k}{q}+q^{k-n}\qBinom{n-1}{k-1}{q}\\
+  \end{align*}
+\end{proof}
+形式的に$xy=q^{-2}yx$が成り立つ文字$x,y$を考える．
+
+この時次が成り立つ．
+\begin{theorem}
+  \[
+    (x+y)^n=\sum_{k=0}^{n}\qBinom{n}{k}{q}q^{k(n-k)}x^{n-k}y^k
+  \]
+\end{theorem}
+\begin{proof}
+  $n=0$のとき，
+  \[
+    (x+y)^0=\sum_{k=0}^{0}\qBinom{n}{k}{q}q^{k(n-k)}x^{n-k}y^k=\qBinom{0}{0}{q}q^0x^0y^0=1
+  \]
+  が成り立つ．
+  \[
+    (x+y)^{n-1}=\sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}x^{n-1-k}y^k
+  \]
+  が成り立つことを仮定し，$(x+y)^n$を考える．
+  \begin{align*}
+    (x+y)^n&=\left(\sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}x^{n-1-k}y^k\right)(x+y)\\
+    &=\sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}x^{n-1-k}y^kx + \sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}x^{n-1-k}y^{k+1}\\
+    &=\sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}q^{2k}x^{n-k}y^k + \sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}x^{n-1-k}y^{k+1}\\
+    &=\sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n+1-k)}x^{n-k}y^k + \sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n-1-k)}x^{n-1-k}y^{k+1}\\
+    &=\sum_{k=0}^{n-1}\qBinom{n-1}{k}{q}q^{k(n+1-k)}x^{n-k}y^k + \sum_{k=1}^{n}\qBinom{n-1}{k-1}{q}q^{(k-1)(n-k)}x^{n-k}y^{k}\\
+    &=\qBinom{n-1}{0}{q}x^n+\sum_{k=1}^{n-1} \left(\qBinom{n-1}{k}{q}q^{kn+k-k^2}+\qBinom{n-1}{k-1}{q}q^{kn+k-k^2-n}\right)x^{n-k}y^k + \qBinom{n-1}{n-1}{q}y^n\\
+    &=\qBinom{n-1}{0}{q}x^n+\sum_{k=1}^{n-1} \left(\qBinom{n-1}{k}{q}q^k+\qBinom{n-1}{k-1}{q}q^{k-n}\right)q^{kn-k^2}x^{n-k}y^k + \qBinom{n-1}{n-1}{q}y^n\\
+    &=\qBinom{n}{0}{q}x^n+\sum_{k=1}^{n-1} \qBinom{n}{k}{q}q^{k(n-k)}x^{n-k}y^k + \qBinom{n}{n}{q}y^n\\
+    &=\sum_{k=0}^n \qBinom{n}{k}{q}q^{k(n-k)}x^{n-k}y^k
+  \end{align*}
+\end{proof}
+\end{document}
